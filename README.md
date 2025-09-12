@@ -1,5 +1,6 @@
-# ProyAirbnb_Grupo2
-Intregrantes:
---Lezma Chuchón, Samantha Alejandra
---Lopez Vilchez, Yannella Andrea
---Tompson Carrillo, Shirley Lucia
+# 📊 ProyAirbnb_Grupo2  
+
+## 👥 Integrantes  
+- Lezma Chuchón, Samantha Alejandra  
+- Lopez Vilchez, Yannella Andrea  
+- Tompson Carrillo, Shirley Lucía  
