@@ -1,47 +1,69 @@
 // Use DBML to define your database structure
 // Docs: https://dbml.dbdiagram.io/docs
-Table Anfitrion {
-  id_anfitrion int [pk]
-  es_superhost boolean
-  total_propiedades_host int
-  identidad_verificada boolean
-}
 
-Table Propiedad {
-  id_propiedad int [pk]
-  id_anfitrion int [ref: > Anfitrion.id_anfitrion]
-  tipo_propiedad varchar
-  tipo_habitacion varchar
-  capacidad int
-  n_habitaciones int
-  precio_noche decimal
-  min_noches int
-  max_noches int
-  barrio varchar
-  ciudad varchar
-  latitud decimal
-  longitud decimal
-}
+CREATE TABLE raw.anfitrion (
+    id_anfitrion INT PRIMARY KEY,                  -- identifica al anfitrión de forma única
+    es_superhost BOOLEAN,                          -- Indica si el anfitrión es Superhost (TRUE/FALSE)
+    total_propiedades_host INT,                    -- Cantidad de propiedades que gestiona este anfitrión
+    identidad_verificada BOOLEAN                   -- Indica si tiene su identidad verificada
+);
 
-Table Huesped {
-  id_huesped int [pk]
-}
 
-Table Resena {
-  id_resena int [pk]
-  id_propiedad int [ref: > Propiedad.id_propiedad]
-  id_huesped int [ref: > Huesped.id_huesped]
-  fecha_resena date
-}
 
-Table Calificacion {
-  id_calificacion int [pk]
-  id_resena int [ref: > Resena.id_resena]
-  puntaje_global int
-  puntaje_precision int
-  puntaje_limpieza int
-  puntaje_checkin int
-  puntaje_comunicacion int
-  puntaje_ubicacion int
-  puntaje_valor int
-}
+CREATE TABLE raw.propiedad (
+    id_propiedad INT PRIMARY KEY,                  -- id de la propiedad
+    id_anfitrion INT NOT NULL,                     
+    tipo_propiedad VARCHAR,                        -- Tipo de propiedad 
+    tipo_habitacion VARCHAR,                       -- Tipo de habitación 
+    capacidad INT,                                 -- Número de huéspedes que pueden alojarse
+    n_habitaciones INT,                            -- Cantidad de habitaciones disponibles
+    precio_noche DECIMAL,                          -- Precio por noche en la propiedad
+    min_noches INT,                                -- Número mínimo de noches permitidas
+    max_noches INT,                                -- Número máximo de noches permitidas
+    barrio VARCHAR,                                -- Barrio donde está ubicada la propiedad
+    ciudad VARCHAR,                                -- Ciudad de la propiedad
+    latitud DECIMAL,                               -- Coordenada geográfica (latitud)
+    longitud DECIMAL,                              -- Coordenada geográfica (longitud)
+    CONSTRAINT fk_propiedad_anfitrion
+        FOREIGN KEY (id_anfitrion) REFERENCES raw.anfitrion(id_anfitrion)  -- Relación con anfitrión
+);
+
+
+CREATE TABLE raw.huesped (
+    id_huesped INT PRIMARY KEY                     -- id del huesped
+);
+
+
+CREATE TABLE raw.resena (
+    id_resena INT PRIMARY KEY,                     -- id de la reseña
+    id_propiedad INT NOT NULL,                     -- FK hacia la propiedad reseñada
+    id_huesped INT NOT NULL,                       -- FK hacia el huésped que deja la reseña
+    fecha_resena DATE,                             -- Fecha en que se registró la reseña
+    CONSTRAINT fk_resena_propiedad
+        FOREIGN KEY (id_propiedad) REFERENCES raw.propiedad(id_propiedad),
+    CONSTRAINT fk_resena_huesped
+        FOREIGN KEY (id_huesped) REFERENCES raw.huesped(id_huesped)
+);
+
+CREATE TABLE raw.calificacion (
+    id_calificacion INT PRIMARY KEY,               -- id de la calificacion
+    id_resena INT NOT NULL,                        
+    puntaje_global INT,                            -- Calificación general
+    puntaje_precision INT,                         -- Puntaje a la precisión del anuncio
+    puntaje_limpieza INT,                          -- Puntaje a la limpieza
+    puntaje_checkin INT,                           -- Puntaje al proceso de check-in
+    puntaje_comunicacion INT,                      -- Puntaje a la comunicación con el anfitrión
+    puntaje_ubicacion INT,                         -- Puntaje a la ubicación
+    puntaje_valor INT,                             -- Puntaje a la relación calidad-precio
+    CONSTRAINT fk_calificacion_resena
+        FOREIGN KEY (id_resena) REFERENCES raw.resena(id_resena)
+);
+
+CREATE TABLE raw.registro_propiedad (
+    id_registro INT PRIMARY KEY,                   -- id de registro
+    id_propiedad INT NOT NULL,                     -- FK hacia propiedad
+    fecha_registro DATE,                           -- Fecha en que se registró la propiedad
+    estado VARCHAR,                                -- Estado de la propiedad (activa, pausada, eliminada)
+    CONSTRAINT fk_registro_propiedad
+        FOREIGN KEY (id_propiedad) REFERENCES raw.propiedad(id_propiedad)
+);
