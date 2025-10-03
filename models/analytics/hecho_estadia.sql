@@ -82,4 +82,4 @@ INNER JOIN tiempo_filtrado t
     ON r.fecha_resena = t.fecha_resena
 INNER JOIN calidad_filtrada c 
     ON r.id_resena = c.id_calidad
-Limit 500
+
