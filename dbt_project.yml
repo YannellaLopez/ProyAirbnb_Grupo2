@@ -29,8 +29,34 @@ clean-targets:         # directories to be removed by `dbt clean`
 # In this example config, we tell dbt to build all models in the example/
 # directory as views. These settings can be overridden in the individual model
 # files using the `{{ config(...) }}` macro.
+
+seeds:
+  pAirbnb_Grupo2:
+
+    reviews:
+      +schema: staging
+      +quote_columns: true
+      +delimiter: ","
+
+    listings:
+      +schema: staging
+      +quote_columns: true
+      +delimiter: ","
+
+
 models:
   pAirbnb_Grupo2:
-    # Config indicated by + and applies to all files under models/example/
-    example:
-      +materialized: view
+    staging:
+      +materialized: table
+      +schema: staging
+    raw:
+      +materialized: table
+      +schema: raw
+    analytics:
+      +materialized: table
+      +schema: analytics
+
+
+
+
+
